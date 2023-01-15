@@ -7,7 +7,7 @@ from skimage.transform import resize
 from sklearn.model_selection import train_test_split
 
 
-def load_notmnist(path='./notMNIST_small', letters='ABCDEFGHIJ',
+def load_notmnist(path='./temp', letters='ABCDEFGHIJ',
                   img_shape=(28, 28), test_size=0.25, one_hot=False):
     # download data if it's missing. If you have any problems, go to the urls
     # and load it manually.
@@ -17,11 +17,10 @@ def load_notmnist(path='./notMNIST_small', letters='ABCDEFGHIJ',
             'wget http://yaroslavvb.com/upload/notMNIST/notMNIST_small.tar.gz') == 0
         print("Extracting ...")
         assert os.system(
-            'tar -zxvf notMNIST_small.tar.gz > untar_notmnist.log') == 0
+            'tar -zxvf temp.tar.gz > untar_notmnist.log') == 0
 
     data, labels = [], []
-    print("Parsing...")
-    for img_path in glob(os.path.join(path, '*/*')):
+    for img_path in glob(os.path.join(path, '*\\*')):
         class_i = img_path.split(os.sep)[-2]
         if class_i not in letters:
             continue
@@ -50,3 +49,7 @@ def load_notmnist(path='./notMNIST_small', letters='ABCDEFGHIJ',
 
     print("Done")
     return X_train, y_train, X_test, y_test
+
+
+if __name__ == '__main__':
+    load_notmnist()

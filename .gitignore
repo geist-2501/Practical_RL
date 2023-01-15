@@ -75,3 +75,5 @@ debian/reproducible-experiment-platform
 debian/files
 *.substvars
 *.debhelper.log
+/week04_approx_rl/videos/
+/week04_[recap]_deep_learning/notMNIST_small/

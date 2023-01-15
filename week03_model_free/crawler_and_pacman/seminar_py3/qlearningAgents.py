@@ -37,20 +37,30 @@ class QLearningAgent(ReinforcementAgent):
         "We initialize agent and Q-values here."
         ReinforcementAgent.__init__(self, **args)
         self._qValues = defaultdict(lambda: defaultdict(lambda: 0))
+        self.extractor = SimpleExtractor()
+
+    def encode_features_to_state(self, state, action):
+        features = self.extractor.getFeatures(state, action)
+        return (features['#-of-ghosts-1-step-away'],
+                features["eats-food"],
+                features["closest-food"],
+                )
 
     def getQValue(self, state, action):
         """
           Returns Q(state,action)
         """
-        return self._qValues[state][action]
+        features = self.encode_features_to_state(state, action)
+        return self._qValues[features][action]
 
     def setQValue(self, state, action, value):
         """
           Sets the Qvalue for [state,action] to the given value
         """
-        self._qValues[state][action] = value
+        features = self.encode_features_to_state(state, action)
+        self._qValues[features][action] = value
 
-#---------------------#start of your code#---------------------#
+    # ---------------------#start of your code#---------------------#
 
     def getValue(self, state):
         """
@@ -63,10 +73,8 @@ class QLearningAgent(ReinforcementAgent):
         if len(possibleActions) == 0:
             return 0.0
 
-        "*** YOUR CODE HERE ***"
-        raise NotImplementedError
-
-        return 0.
+        # V(S)=max_{a} Q(s,a)
+        return max([self.getQValue(state, a) for a in possibleActions])
 
     def getPolicy(self, state):
         """
@@ -80,9 +88,12 @@ class QLearningAgent(ReinforcementAgent):
             return None
 
         best_action = None
-
-        "*** YOUR CODE HERE ***"
-        raise NotImplementedError
+        best_action_value = -math.inf
+        for action in possibleActions:
+            q = self.getQValue(state, action)
+            if q > best_action_value:
+                best_action_value = q
+                best_action = action
 
         return best_action
 
@@ -109,10 +120,11 @@ class QLearningAgent(ReinforcementAgent):
         # agent parameters:
         epsilon = self.epsilon
 
-        "*** YOUR CODE HERE ***"
-        raise NotImplementedError
-
-        return action
+        be_greedy = util.flipCoin(1 - epsilon)
+        if be_greedy:
+            return self.getPolicy(state)
+        else:
+            return random.choice(possibleActions)
 
     def update(self, state, action, nextState, reward):
         """
@@ -127,16 +139,14 @@ class QLearningAgent(ReinforcementAgent):
         gamma = self.discount
         learning_rate = self.alpha
 
-        "*** YOUR CODE HERE ***"
-        raise NotImplementedError
+        v = self.getValue(nextState)
+        old_q = self.getQValue(state, action)
+        new_q = (1 - learning_rate) * old_q + learning_rate * (reward + gamma * v)
 
-        reference_qvalue = PleaseImplementMe
-        updated_qvalue = PleaseImplementMe
-
-        self.setQValue(PleaseImplementMe, PleaseImplementMe, updated_qvalue)
+        self.setQValue(state, action, new_q)
 
 
-#---------------------#end of your code#---------------------#
+# ---------------------#end of your code#---------------------#
 
 
 class PacmanQAgent(QLearningAgent):

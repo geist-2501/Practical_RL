@@ -23,7 +23,7 @@ class MDP:
         :param rewards: rewards[s][a][s_next] = r(s,a,s')
             A dict[state -> dict] of dicts[action -> dict] of dicts[next_state -> reward]
             The reward for anything not mentioned here is zero.
-        :param get_initial_state: a state where agent starts or a callable() -> state
+        :param initial_state: a state where agent starts or a callable() -> state
             By default, picks initial state at random.
 
         States and actions can be anything you can use as dict keys, but we recommend that you use strings or integers
